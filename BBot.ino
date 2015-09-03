@@ -1,6 +1,6 @@
 /*==============================================
  * BBot 
- * 29 Aug 2015
+ * 2 Sep 2015
  * 
  *==============================================
 */
@@ -117,6 +117,7 @@ void setup() {
     devStatus = mpu.dmpInitialize();
 
     // supply your own gyro offsets here, scaled for min sensitivity
+    //Note - these are all wrong for this platform,
     mpu.setXGyroOffset(220);
     mpu.setYGyroOffset(76);
     mpu.setZGyroOffset(-85);
@@ -195,7 +196,7 @@ void loop()
     else
       Reduction=1; 
       
-    PID(Heading,HeadingTgt,&Demand,Reduction * 11,Reduction * .7,/*Reduction*/0,Moving);          // If not moving zero integral
+    PID(Heading,HeadingTgt,&Demand,Reduction * 15,Reduction * .04,/*Reduction*/0,Moving);          // If not moving zero integral
   
 
     // *********************************************************************
@@ -243,7 +244,7 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
 {
   static byte state;
   static int ForeDmd,Time;
-  const int ExecuteDelay=80;
+  const int ExecuteDelay=70;
   
   if(*Moving)
   {
@@ -254,11 +255,11 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
       switch(*CurrentCMD)
       {
         case UP:    ForeDmd = 400;
-                    Time = ExecuteDelay *2;
+                    Time = ExecuteDelay ;
                     state++;
                     break;
         case DN:    ForeDmd = -400;
-                    Time = ExecuteDelay *2 ;
+                    Time = ExecuteDelay  ;
                     state++;
                     break;
         case LEFT:  *HeadingTgt -= 90;
