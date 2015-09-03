@@ -196,7 +196,7 @@ void loop()
     else
       Reduction=1; 
       
-    PID(Heading,HeadingTgt,&Demand,Reduction * 15,Reduction * .04,/*Reduction*/0,Moving);          // If not moving zero integral
+    PID(Heading,HeadingTgt,&Demand,Reduction * 15,Reduction * .08,/*Reduction*/0,Moving);          // If not moving zero integral
   
 
     // *********************************************************************
@@ -244,7 +244,7 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
 {
   static byte state;
   static int ForeDmd,Time;
-  const int ExecuteDelay=70;
+  const int ExecuteDelay=80;
   
   if(*Moving)
   {
@@ -255,11 +255,11 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
       switch(*CurrentCMD)
       {
         case UP:    ForeDmd = 400;
-                    Time = ExecuteDelay ;
+                    Time = ExecuteDelay * .7 ;
                     state++;
                     break;
         case DN:    ForeDmd = -400;
-                    Time = ExecuteDelay  ;
+                    Time = ExecuteDelay * .7 ;
                     state++;
                     break;
         case LEFT:  *HeadingTgt -= 90;
