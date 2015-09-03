@@ -1,16 +1,27 @@
-/*==============================================
- * BBot 
- * 2 Sep 2015
- * 
- *==============================================
-*/
+/*
+ *
+ * @file BBot.ino
+ *
+ * K Lawson 2015
+ *
+ * Bee Bot / Big Trak robot clone.
+ *
+ * A programmable robot using 9110 H Bridge and MPU 6050 IMU
+ * The robot can be programmed with a keypad and follows a 
+ * programmed path.  The IMU prevents drift and allows for
+ * precise direction changes without encoders. 
+ *
+ *
+ */
 
+//
 // I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
 // for both classes must be in the include path of your project
 #include "I2Cdev.h"
 
 #include "MPU6050_6Axis_MotionApps20.h"
 
+//
 // Arduino Wire library is required if I2Cdev I2CDEV_ARDUINO_WIRE implementation
 // is used in I2Cdev.h
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
@@ -20,12 +31,12 @@
 MPU6050 mpu;
 
 
-/* =========================================================================
-   NOTE: In addition to connection 3.3v, GND, SDA, and SCL, this sketch
-   depends on the MPU-6050's INT pin being connected to the Arduino's
-   external interrupt #0 pin. On the Arduino Uno and Mega 2560, this is
-   digital I/O pin 2.
- * ========================================================================= */
+//
+//   NOTE: In addition to connection 3.3v, GND, SDA, and SCL, this sketch
+//   depends on the MPU-6050's INT pin being connected to the Arduino's
+//   external interrupt #0 pin. On the Arduino Uno and Mega 2560, this is
+//   digital I/O pin 2.
+
 
 #define LED_PIN 13 // (Arduino is 13, Teensy is 11, Teensy++ is 6)
 bool blinkState = false;
@@ -50,11 +61,8 @@ float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gra
 // packet structure for InvenSense teapot demo
 uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
 
-
-// ================================================================
-// ===                    CMDS DETECTION ROUTINE                ===
-// ================================================================
-//BTNS
+//
+// Define commands that can be executed, first 2 are internally generated
 #define NONE 0
 #define IMU_WARM 1
 #define CANCEL 2
@@ -65,24 +73,16 @@ uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\
 #define RIGHT 8
 #define GO 9
 
-//SYSTEM
-
-
-
-// ================================================================
-// ===               INTERRUPT DETECTION ROUTINE                ===
-// ================================================================
-
+//
+// ISR
 volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
 void dmpDataReady() {
     mpuInterrupt = true;
 }
 
 
-
-// ================================================================
-// ===                      INITIAL SETUP                       ===
-// ================================================================
+//
+// Setup
 
 void setup() {
     // join I2C bus (I2Cdev library doesn't do this automatically)
@@ -163,9 +163,9 @@ void setup() {
 
 
 
-// ================================================================
-// ===                    MAIN PROGRAM LOOP                     ===
-// ================================================================
+//
+// Main loop of program
+// Repeat forever
 
 void loop() 
 {
@@ -176,7 +176,6 @@ void loop()
     int i;
     SubLoop++;
 
- 
       
     // if programming failed, don't try to do anything
     if (!dmpReady) return;
@@ -189,14 +188,14 @@ void loop()
     while (!mpuInterrupt && fifoCount < packetSize) {
        
     }
-    ButtonSounder(&Command);                                // @SM clear cmd msg here when done
-    GetHeading(&Heading,&HeadingTgt, Moving);               // Hdg 1000 = FWD, 1180 = Back. Reset tgt & hdg when not moving
-    if((CurrentCMD == LEFT) || (CurrentCMD == RIGHT) || (CurrentCMD == GO) )  // We seem to need more gain when the robot is moving? and less when stationary.
+    ButtonSounder(&Command);                                					// @SM clear cmd msg here when done
+    GetHeading(&Heading,&HeadingTgt, Moving);               					// Get heading
+    if((CurrentCMD == LEFT) || (CurrentCMD == RIGHT) || (CurrentCMD == GO) )  	// We seem to need more gain when the robot is moving? and less when stationary.
       Reduction = .3; // lower gain required
     else
       Reduction=1; 
       
-    PID(Heading,HeadingTgt,&Demand,Reduction * 15,Reduction * .08,/*Reduction*/0,Moving);          // If not moving zero integral
+    PID(Heading,HeadingTgt,&Demand,Reduction * 15,Reduction * .08,0,Moving);	// If not moving zero integral
   
 
     // *********************************************************************
@@ -217,12 +216,7 @@ void loop()
                    
         PullNextUserCommand(CMDBuff, Moving, &CurrentCMD);  // @SM if moving then execute next command 
         
-     /*   Serial.print(Heading);
-        Serial.print(" , "); 
-        Serial.print(HeadingTgt);
-        Serial.print(" , "); 
-        Serial.println(Demand);*/
-        
+      
         ExecuteCommand(&CurrentCMD,&Moving,&HeadingTgt,Demand);// @SM takes several seconds to move the robot with a state machine
                                                             // read CMD , then execute CMD in background.  For turn this is a modification of the TGT then a wait
                                                             // when a CMD has executed set it to NEXT_CMD so above code pulls next CMD
@@ -239,6 +233,10 @@ void loop()
     }
     
 }//END Loop
+
+//
+// This routine executes the command in *CurrentCMD then zeroes it when done.
+// This only occurs if we are moving otherwise we are in standby.
 
 void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand)
 {
@@ -314,6 +312,10 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
 }//END ExecuteCommand
 
      
+//
+// Pull a command from the buffer if the current command has been executed and 
+// we are moving.
+
 void PullNextUserCommand(byte CMDBuff[],byte Moving, byte *CurrentCMD)  // @SM if moving then execute next command 
 {
   static byte ptr;
@@ -322,21 +324,11 @@ void PullNextUserCommand(byte CMDBuff[],byte Moving, byte *CurrentCMD)  // @SM i
   {
     if(*CurrentCMD==NONE)
     { 
-       /* Serial.print(CMDBuff[0]); Serial.print(" , ");
-      Serial.print(CMDBuff[1]); Serial.print(" , ");
-      Serial.print(CMDBuff[2]); Serial.print(" , ");
-      Serial.print(CMDBuff[3]); Serial.print(" , ");
-       Serial.print(CMDBuff[4]); Serial.print(" , ");
-        Serial.print(CMDBuff[5]); Serial.print(" , ");
-         Serial.print(CMDBuff[6]); Serial.print(" , ");
-          Serial.print(CMDBuff[7]); Serial.println("");*/
-      
-       
+           
         //need a new CMD...
         if(ptr <= CMDBuff[0])
         {
-         /* Serial.print(CMDBuff[ptr]);
-          Serial.println(" -Fetching New Command...");*/
+
            //CMDs still in there
            *CurrentCMD = CMDBuff[ptr];  
            CMDBuff[ptr] = 0; // clear to make debugging easier
@@ -350,6 +342,11 @@ void PullNextUserCommand(byte CMDBuff[],byte Moving, byte *CurrentCMD)  // @SM i
     ptr=1; //set ptr to 1st cmd
     
 } //END PullNextUserCommand
+
+
+//
+// Check to see if the IMU has settled down and is giving a steady heading.  
+// If it hasn't disable the go button.
 
 void CheckIMU(byte *Command, float  Heading)
 {
@@ -377,16 +374,10 @@ void CheckIMU(byte *Command, float  Heading)
   }
 }//END Check IMU
 
-/*
- ===================================================================
- CSU:    getPID()
- ===================================================================
- Desc:   A PID implementation; control an error with 3 constants and
- return a rate +/- 1000.
- I've lowered this to 350 as a result of the motor tests.
- 
- ===================================================================
- */
+//
+// A PID implementation; control an error with 3 constants and
+// of 350 as a result of the motor tests.  If not moving do nothing.
+
 void PID(float Hdg,float HdgTgt,int *Demand, float kP,float kI,float kD, byte Moving)                                                 
 {
   static unsigned long lastTime; 
@@ -434,6 +425,11 @@ void PID(float Hdg,float HdgTgt,int *Demand, float kP,float kI,float kD, byte Mo
 
 }//END getPID
 
+//
+// Build up a list of commands from the user via the keyboard then
+// when asked initiate the 'moving' sequence.  A cancel command deletes all
+// commands.
+
 void CompileUserCommands(byte CMDBuff[],byte Command,byte *Moving)
 {
     if(*Moving == 0)
@@ -458,6 +454,11 @@ void CompileUserCommands(byte CMDBuff[],byte Command,byte *Moving)
     }//END IF
 }//END CompileUserCommands
 
+//
+// Use the onboard speaker to issue beepy noises when the user hits
+// buttons.  A noise is also generated by the Bee Bot when the IMU
+// has warmed up
+
 void ButtonSounder(byte *Command)
 {
     static int state;
@@ -473,7 +474,6 @@ void ButtonSounder(byte *Command)
         state+=10;
       
       *Command = NONE;
-      //Serial.println(*Command);
     }
 
     // toggle DO to make noise
@@ -486,6 +486,11 @@ void ButtonSounder(byte *Command)
        digitalWrite(12, 0); 
     }
 }//END ButtonSounder
+
+//
+// Use the IMU to get the curreent heading.  This is 0-360 degrees.
+// It's not relative to North but where the robot was pointing when the
+// GO button was pressed.
 
 void  GetHeading(float *Heading,float *HeadingTgt, byte Moving)               
 {
@@ -536,19 +541,27 @@ void  GetHeading(float *Heading,float *HeadingTgt, byte Moving)
 }//END GetHeading
 
 
-
+//
+// Decode the analog keyboard
 
 void DecodeUserSwitch(byte *Command,byte Moving,byte *CurrentCMD)
 {
     static byte state = 0;
     static int relcount = 0;
-    int Anal;
+    static int Anal, LastAnal;
 
     if(Moving)
       return;
       
     Anal = analogRead(0);
-    
+
+  /*  if (abs(Anal-LastAnal) < 10)
+    {
+        LastAnal = Anal; 
+        return;   
+    }
+    LastAnal = Anal;   */
+
 /*  144 up
     327 dn
     0 L
@@ -570,7 +583,7 @@ void DecodeUserSwitch(byte *Command,byte Moving,byte *CurrentCMD)
         *Command = LEFT;
       else if (Anal < 800)
         state = 1; //go
-//Serial.println(*Command);
+
       //normal command entry
       if(*Command > NONE)
       {                         //Serial.println("got CMD");
@@ -610,14 +623,10 @@ void DecodeUserSwitch(byte *Command,byte Moving,byte *CurrentCMD)
 
 }//END DecodeUSerSwitch
 
-/*
- ===================================================================
- CSU:    LimitInt()
- ===================================================================
- Clamp an int between a min and max.  
-        
- ===================================================================
- */
+//
+//  LimitInt
+//  Clamp an int between a min and max.  
+
 void LimitInt(int *x,int Min, int Max)
 {
   if(*x > Max)
@@ -627,15 +636,10 @@ void LimitInt(int *x,int Min, int Max)
 
 }//END LimitInt
 
-/*
- ===================================================================
- CSU:    LimitFloat()
- ===================================================================
- Clamp a float between a min and max.  Note doubles are the same 
- as floats on this platform.
-        
- ===================================================================
- */
+//
+// Clamp a float between a min and max.  Note doubles are the same 
+// as floats on this platform.
+
 void LimitFloat(float *x,float Min, float Max)
 {
   if(*x > Max)
@@ -645,37 +649,34 @@ void LimitFloat(float *x,float Min, float Max)
 
 }//END LimitInt
 
-/*
- ===================================================================
- CSU:    DriveMotors()
- ===================================================================
- Desc:   Drive port / stbd motors fwd or backwards using PWM.
- A breakout calc is needed to linearise the response since
- torque is proportional to voltage on a DC mottor the wheels
- don't move on the lower 25% range.
- 
- A L9110 IC controls the motors and 2 PWMs are used.  2 DOs control 
- direction.
- 
- IA(DO) IB(PWM) Motor State 
- L      L       Off 
- H      L       Forward 
- L      H       Reverse 
- H      H       Off 
 
- Inputs
- -----
- DriveVal    +/-1000  
-
- Note
- ----
- Demand>     0  100 200 300 400 500 600 700 800 900 1000
- Distance>  33  70  93  110 128 140 151 164* 168 168 168
-
- Motor demands are linear ish up to 700 with AAA hybrio batteries.
- For PID Distance = 400 and PID gets 300
- ===================================================================
- */
+//
+// Drive port / stbd motors fwd or backwards using PWM.
+// A breakout calc is needed to linearise the response since
+// torque is proportional to voltage on a DC mottor the wheels
+// don't move on the lower 25% range.
+// 
+// A L9110 IC controls the motors and 2 PWMs are used.  2 DOs control 
+// direction.
+// 
+// IA(DO) IB(PWM) Motor State 
+// L      L       Off 
+// H      L       Forward 
+// L      H       Reverse 
+// H      H       Off 
+//
+// Inputs
+// -----
+// DriveVal    +/-1000  
+//
+// Note
+// ----
+// Demand>     0  100 200 300 400 500 600 700 800 900 1000
+// Distance>  33  70  93  110 128 140 151 164* 168 168 168
+//
+// Motor demands are linear ish up to 700 with AAA hybrio batteries.
+// For PID Distance = 400 and PID gets 300
+//
 void DriveMotors(int PDrive,int SDrive,byte Moving)
 {
   int Mag;
@@ -756,3 +757,15 @@ void DriveMotors(int PDrive,int SDrive,byte Moving)
       Serial.println(Demand);   
       *
  */
+
+   /* Serial.print(CMDBuff[0]); Serial.print(" , ");
+      Serial.print(CMDBuff[1]); Serial.print(" , ");
+      Serial.print(CMDBuff[2]); Serial.print(" , ");
+      Serial.print(CMDBuff[3]); Serial.print(" , ");
+       Serial.print(CMDBuff[4]); Serial.print(" , ");
+        Serial.print(CMDBuff[5]); Serial.print(" , ");
+         Serial.print(CMDBuff[6]); Serial.print(" , ");
+          Serial.print(CMDBuff[7]); Serial.println("");*/
+      
+	           /* Serial.print(CMDBuff[ptr]);
+          Serial.println(" -Fetching New Command...");*/
