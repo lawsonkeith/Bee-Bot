@@ -1,5 +1,5 @@
 /*==============================================
- * BBot
+ * BBot 
  * 29 Aug 2015
  * 
  *==============================================
@@ -250,14 +250,15 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
     // @@@@@@@@@@ CMD Init @@@@@@@@@@@@@@@@@@@@@@
     if(state==0) 
     {
+     
       switch(*CurrentCMD)
       {
-        case UP:    ForeDmd = 600;
-                    Time = ExecuteDelay * 2;
+        case UP:    ForeDmd = 400;
+                    Time = ExecuteDelay *2;
                     state++;
                     break;
-        case DN:    ForeDmd = -600;
-                    Time = ExecuteDelay * 2;
+        case DN:    ForeDmd = -400;
+                    Time = ExecuteDelay *2 ;
                     state++;
                     break;
         case LEFT:  *HeadingTgt -= 90;
@@ -272,6 +273,7 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
                     break;
         case GO:    state++;
                     Time = ExecuteDelay;
+
                     break;
         case NONE:
                     break;  
@@ -307,7 +309,7 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
     ForeDmd = 0;
   }
 
-  DriveMotors( (Demand * -1) + ForeDmd,  Demand + ForeDmd, *Moving);//TEST !!!!!!!!!!!!!!!!!
+  DriveMotors( (Demand * -1) + ForeDmd,  Demand + ForeDmd, *Moving);
 }//END ExecuteCommand
 
      
@@ -319,21 +321,21 @@ void PullNextUserCommand(byte CMDBuff[],byte Moving, byte *CurrentCMD)  // @SM i
   {
     if(*CurrentCMD==NONE)
     { 
-        Serial.print(CMDBuff[0]); Serial.print(" , ");
+       /* Serial.print(CMDBuff[0]); Serial.print(" , ");
       Serial.print(CMDBuff[1]); Serial.print(" , ");
       Serial.print(CMDBuff[2]); Serial.print(" , ");
       Serial.print(CMDBuff[3]); Serial.print(" , ");
        Serial.print(CMDBuff[4]); Serial.print(" , ");
         Serial.print(CMDBuff[5]); Serial.print(" , ");
          Serial.print(CMDBuff[6]); Serial.print(" , ");
-          Serial.print(CMDBuff[7]); Serial.println("");
+          Serial.print(CMDBuff[7]); Serial.println("");*/
       
        
         //need a new CMD...
         if(ptr <= CMDBuff[0])
         {
-          Serial.print(CMDBuff[ptr]);
-          Serial.println(" -Fetching New Command...");
+         /* Serial.print(CMDBuff[ptr]);
+          Serial.println(" -Fetching New Command...");*/
            //CMDs still in there
            *CurrentCMD = CMDBuff[ptr];  
            CMDBuff[ptr] = 0; // clear to make debugging easier
@@ -380,7 +382,7 @@ void CheckIMU(byte *Command, float  Heading)
  ===================================================================
  Desc:   A PID implementation; control an error with 3 constants and
  return a rate +/- 1000.
- I've lowered this to 500 since we don't want to rotate at full speed ever.
+ I've lowered this to 350 as a result of the motor tests.
  
  ===================================================================
  */
@@ -416,7 +418,7 @@ void PID(float Hdg,float HdgTgt,int *Demand, float kP,float kI,float kD, byte Mo
   errSum += (error * timeChange);   
 
   //integral windup guard
-  LimitFloat(&errSum, -700, 700);
+  LimitFloat(&errSum, -300, 300);
 
   float dErr = (error - lastErr) / timeChange;       
 
@@ -427,7 +429,7 @@ void PID(float Hdg,float HdgTgt,int *Demand, float kP,float kI,float kD, byte Mo
   lastTime = now; 
 
   //limit demand 
-  LimitInt(Demand, -800, 800);
+  LimitInt(Demand, -400, 400);
 
 }//END getPID
 
@@ -437,7 +439,7 @@ void CompileUserCommands(byte CMDBuff[],byte Command,byte *Moving)
     {
       // When static build up an array of commands.  !st byte is # commands
       // GO btn executes or can CANCEL commands.  When we get a go then start moving
-      if(Command >= UP )
+      if(Command >= CANCEL )
       {
         CMDBuff[0]++;
         CMDBuff[ CMDBuff[0] ] = Command;
@@ -527,11 +529,13 @@ void  GetHeading(float *Heading,float *HeadingTgt, byte Moving)
   }
   
   if(!Moving)
-  { 
-      
+  {     
       *HeadingTgt=*Heading;
   } 
 }//END GetHeading
+
+
+
 
 void DecodeUserSwitch(byte *Command,byte Moving,byte *CurrentCMD)
 {
@@ -662,6 +666,13 @@ void LimitFloat(float *x,float Min, float Max)
  -----
  DriveVal    +/-1000  
 
+ Note
+ ----
+ Demand>     0  100 200 300 400 500 600 700 800 900 1000
+ Distance>  33  70  93  110 128 140 151 164* 168 168 168
+
+ Motor demands are linear ish up to 700 with AAA hybrio batteries.
+ For PID Distance = 400 and PID gets 300
  ===================================================================
  */
 void DriveMotors(int PDrive,int SDrive,byte Moving)
@@ -676,10 +687,11 @@ void DriveMotors(int PDrive,int SDrive,byte Moving)
   
   LimitInt(&PDrive, -1000,1000);
   LimitInt(&SDrive, -1000,1000);
-  
-  Mag = abs(SDrive) * .2 + 45;//was 50
+
+  // ========= Port drive =========
+  Mag = abs(PDrive) * .205 + 45;
  if(PDrive == 0) Mag = 0;
- 
+  
   if(PDrive < 0)
   {
     // fwds
@@ -693,9 +705,8 @@ void DriveMotors(int PDrive,int SDrive,byte Moving)
     analogWrite(3, Mag);
   } 
 
-  // a10    Port motor    b-1b(dir)      
-  // a11                  b-1a
-  Mag = abs(SDrive) * .2 + 45;
+  // ========= Stbd drive =========
+  Mag = abs(SDrive) * .205 + 45;
   if(SDrive == 0) Mag = 0;
   
   if(SDrive < 0)
@@ -710,7 +721,24 @@ void DriveMotors(int PDrive,int SDrive,byte Moving)
     digitalWrite(10, LOW);
     analogWrite(11, Mag);
   }  
-}//END DrivePortMotor
+}//END DriveMotors
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
  *    delay(10000);
