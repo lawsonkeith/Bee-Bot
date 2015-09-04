@@ -24,7 +24,7 @@ This is done with an Arduino pro mini.  You need a 3.3V version or a version tha
 This comes from an analogue touch pad that has 5 buttons, each button outputs a different voltage into the Arduino analog input when pressed.
 
 **Obstacle avoidance** -
-This is done using a sharp IP range finder which feeds into the second aarduino analog input.
+This is done using a sharp IR range finder which feeds into the second Arduino analog input.
 
 **Power** -
 The unit is powered using 4xAAA hybrio batteries. This makes up the unregulated supply that feeds the motor control.  The rest of the devices are powered by a 3.3V regulated supply which is generated on the Arduino mini pro.  I made a little power distribution board that was fed via a switch to help me route the power on the device.
