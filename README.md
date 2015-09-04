@@ -50,7 +50,18 @@ The software is coded to do the following:
 
 Note - You need to install the I2cDev and MPU6050 Libraries in your Arduino->Libraries folder.  I've provided these as a zip file, unzip it and drag the folders to above location.
 
+Calibration - You need to calibrate the IMU, to do this use the RAW program 'MPU6050_raw.ino' which is in the ZIP file.  The constants you get from there can be fed into your BBot.ino program.  YOu may get away with not doing it but I reccomend that you do.
 
+http://www.i2cdevlib.com/forums/topic/91-how-to-decide-gyro-and-accelerometer-offsett/
+
+1. Put the MPU6050 in a flat and horizontal surface. Use an inclinometer to check that it is as horizontal as possible.
+2. Modify the RAW program to put every offset to 0. ("setXGyroOffset/setYGyroOffset/setZGyroOffset/setZAccelOffset"  =0 ).
+3. Upload the RAW program to your arduino and open serial monitor so you can see the values it is returning.
+4. Leave it operating for a few minutes (5-10) so temperature gets stabilized.
+5. Check the values in the serial monitor and write them down.
+6. Now modify your program again updating your offsets and run the sketch, with updated offsets.
+7. Repeat this process until your program is returning 0 for every gyro, 0 for X and Y accel, and +16384 for Z accel.
+8. Once you achieve this, those are the offsets for that MPU6050, you will have to repeat this for every MPU6050 you use.
 
 
 
