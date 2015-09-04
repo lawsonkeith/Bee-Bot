@@ -10,7 +10,7 @@ The idea is you program it to navigate round the room i.e send it to the kitchen
 
 
 ## Hardware
-Use the schematic to wire up your robot.  I've included wheel encoders here but I didn't use them.  
+Use the schematic to wire up your robot.  
 
 ![](https://github.com/lawsonkeith/Bee-Bot/blob/master/Schematic.png)
 
