@@ -118,12 +118,15 @@ void setup() {
     devStatus = mpu.dmpInitialize();
 
     // supply your own gyro offsets here, scaled for min sensitivity
-    //Note - these are all wrong for this platform,
-    mpu.setXGyroOffset(220);
-    mpu.setYGyroOffset(76);
-    mpu.setZGyroOffset(-85);
-    mpu.setZAccelOffset(1788); // 1688 factory default for my test chip
-
+    // Note - use the 'raw' program to get these.  
+    // Expect an unreliable or long startup if you don't bother!!! 
+    mpu.setXGyroOffset(66);
+    mpu.setYGyroOffset(25);
+    mpu.setZGyroOffset(45);
+    mpu.setXAccelOffset(-1640);
+    mpu.setYAccelOffset(1240);
+    mpu.setZAccelOffset(1200);
+    
     // make sure it worked (returns 0 if so)
     if (devStatus == 0) {
         // turn on the DMP, now that it's ready
@@ -340,9 +343,6 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
     //NOT Moving
     ForeDmd = 0;
   }
-
-
-
   DriveMotors( (Demand * -1) + ForeDmd,  Demand + ForeDmd, *Moving);
 }//END ExecuteCommand
 
@@ -584,42 +584,39 @@ void DecodeUserSwitch(byte *Command,byte Moving,byte *CurrentCMD)
 {
     static byte state = 0;
     static int relcount = 0;
-    static int Anal, LastAnal;
+    static int Anal[5], LastAnal;
 
     if(Moving)
       return;
       
-    Anal = analogRead(0);
+    Anal[4] = Anal[3];
+    Anal[3] = Anal[2];
+    Anal[2] = Anal[1];
+    Anal[1] = Anal[0];  
+    Anal[0] = analogRead(0);
 
-  /*  if (abs(Anal-LastAnal) < 10)
-    {
-        LastAnal = Anal; 
-        return;   
-    }
-    LastAnal = Anal;   */
-
-/*  144 up
-    327 dn
-    0 L
-    500 R
-    740 Go
+/*  144 dn 6
+    327 up 5
+    0 R 8
+    500 L 7
+    740 Go 9
     */
     *Command = NONE;
     if(state == 0)
     {
       relcount=0;
-      //detect btn press by user
-      if (Anal < 100)
+      //detect btn press by user - try and get rid of mis-read btns
+      if ( InRange(60, -20, Anal[0], Anal[1], Anal[2]) )
         *Command = RIGHT;
-      else if (Anal < 200)
+      else if ( InRange(155, 120, Anal[0], Anal[1], Anal[2]))
         *Command = DN;
-      else if (Anal < 400)
+      else if (InRange(350, 310, Anal[0], Anal[1], Anal[2]))
         *Command = UP;
-      else if (Anal < 600)
+      else if (InRange(520, 480, Anal[0], Anal[1], Anal[2]))
         *Command = LEFT;
-      else if (Anal < 800)
+      else if (InRange(760, 700, Anal[0], Anal[1], Anal[2]))
         state = 1; //go
-
+        
       //normal command entry
       if(*Command > NONE)
       {                         //Serial.println("got CMD");
@@ -637,7 +634,7 @@ void DecodeUserSwitch(byte *Command,byte Moving,byte *CurrentCMD)
         state=2;
       }
 
-      if(Anal>800)
+      if(Anal[0]>800)
       {
         *Command=GO;
         state = 2;
@@ -647,7 +644,7 @@ void DecodeUserSwitch(byte *Command,byte Moving,byte *CurrentCMD)
     else if(state == 2)
     {
       //wait release
-      if(Anal > 800)
+      if(Anal[0] > 800)
         relcount++;
       else
         relcount=0;
@@ -761,8 +758,19 @@ void DriveMotors(int PDrive,int SDrive,byte Moving)
   }  
 }//END DriveMotors
 
+//
+// Check if a b & c are in range
+// This is a comparisson function for cleaning up analog inputs
 
+byte InRange(int hi, int lo, int a, int b, int c)
+{
+  if(a<hi && a>lo)
+    if(b<hi && b>lo)
+      if(c<hi && c>lo)
+        return(1);
 
+  return(0);
+}//END InRange
 
 
 
@@ -805,3 +813,17 @@ void DriveMotors(int PDrive,int SDrive,byte Moving)
       
 	           /* Serial.print(CMDBuff[ptr]);
           Serial.println(" -Fetching New Command...");*/
+
+          /*
+           *    Serial.print( Anal[4]);
+        Serial.print( ",");
+        Serial.print( Anal[3]);
+        Serial.print( ",");
+        Serial.print( Anal[2]);
+        Serial.print( ",");
+        Serial.print( Anal[1]);
+        Serial.print( ",");
+        Serial.print( Anal[0]);
+        Serial.print( "------");
+        Serial.println(*Command);
+           */
