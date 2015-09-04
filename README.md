@@ -36,13 +36,13 @@ I've used 2.54mm headers and socket-socket connectors to wire everything up.
 
 The software is coded to do the following:
 
-(1) Wait for gyro heading to become stable (10s?) and tell the user with the speaker
-(2) Compile user commands (FWD, BACK, LEFT, RIGHT)
-(3) Execute commands as required (GO btn)
-(4) During execution use gyro to prevent drift due to non linearity of the motors
-(5) If an obstacle is detected in FWD mode disable the drives and issue a sound
-(6) If the 'GO' btn is held in delete current command list
-(7) When executing a command list use PID control to make sure heading doesnt drift from setpoint
+1. Wait for gyro heading to become stable (10s?) and tell the user with the speaker
+2. Compile user commands (FWD, BACK, LEFT, RIGHT)
+3. Execute commands as required (GO btn)
+4. During execution use gyro to prevent drift due to non linearity of the motors
+5. If an obstacle is detected in FWD mode disable the drives and issue a sound
+6. If the 'GO' btn is held in delete current command list
+7. When executing a command list use PID control to make sure heading doesnt drift from setpoint
 
 Note - You need to install the I2cDev and MPU6050 Libraries in your Arduino->Libraries folder.  I've provided these as a zip file, unzip it and drag the folders to above location.
 
