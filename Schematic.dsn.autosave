@@ -112,6 +112,14 @@ download the executable.-->
 			<INDEX>0</INDEX>
 			<COLOR>00FF00</COLOR>
 		</FILL>
+		<FILL id='13'>
+			<INDEX>0</INDEX>
+			<COLOR>400000</COLOR>
+		</FILL>
+		<FILL id='14'>
+			<INDEX>0</INDEX>
+			<COLOR>400000</COLOR>
+		</FILL>
 		<SYMBOLDEF id='1'>
 			<NAME type='0'>Arduino Pro Mini</NAME>
 			<REF type='0'>U?</REF>
@@ -579,6 +587,44 @@ download the executable.-->
 				<TEXT pos='64.00000,40.00000' direction='3' font='3' color='000000'>Wheel enc</TEXT>
 			</TinyCAD>
 		</SYMBOLDEF>
+		<SYMBOLDEF id='10'>
+			<NAME type='0'>IR Range Finder</NAME>
+			<REF type='0'>U?</REF>
+			<DESCRIPTION>IR RangeFinder</DESCRIPTION>
+			<PPP>1</PPP>
+			<FIELD>
+				<NAME>$$SPICE_PROLOG_PRIORITY</NAME>
+				<DEFAULT>5</DEFAULT>
+				<FT>000002</FT>
+				<VALUE></VALUE>
+				<POS>0.00000,0.00000</POS>
+			</FIELD>
+			<FIELD>
+				<NAME>$$SPICE_EPILOG_PRIORITY</NAME>
+				<DEFAULT>5</DEFAULT>
+				<FT>000002</FT>
+				<VALUE></VALUE>
+				<POS>0.00000,0.00000</POS>
+			</FIELD>
+			<FIELD>
+				<NAME>Package</NAME>
+				<DEFAULT>package name for PCB layout</DEFAULT>
+				<FT>000001</FT>
+				<VALUE></VALUE>
+				<POS>0.00000,0.00000</POS>
+			</FIELD>
+			<REF_POINT power='0' part='0' pos='108.00000,52.00000'/>
+			<TinyCAD>
+				<RECTANGLE a='66.00000,36.00000' b='108.00000,48.00000' style='4' fill='4'/>
+				<PIN pos='78.00000,52.00000' which='0' elec='0' direction='0' part='0' number='1' show='3' length='30' number_pos='0' centre_name='0'>Pwr</PIN>
+				<PIN pos='82.00000,52.00000' which='0' elec='0' direction='0' part='0' number='2' show='3' length='30' number_pos='0' centre_name='0'>Sig</PIN>
+				<PIN pos='86.00000,52.00000' which='0' elec='0' direction='0' part='0' number='3' show='3' length='30' number_pos='0' centre_name='0'>Gnd</PIN>
+				<RECTANGLE a='68.00000,38.00000' b='76.00000,46.00000' style='4' fill='13'/>
+				<RECTANGLE a='88.00000,38.00000' b='106.00000,46.00000' style='4' fill='14'/>
+				<ELLIPSE a='70.00000,40.00000' b='74.00000,44.00000' style='4' fill='1'/>
+				<ELLIPSE a='98.00000,40.00000' b='102.00000,44.00000' style='4' fill='1'/>
+			</TinyCAD>
+		</SYMBOLDEF>
 		<OPTIONS>
 			<GRID>0</GRID>
 			<UNITS>0</UNITS>
@@ -596,14 +642,14 @@ download the executable.-->
 			<COLOR_NOTETEXT_TEXT>FF0000</COLOR_NOTETEXT_TEXT>
 		</OPTIONS>
 		<SYMBOL id='8' pos='254.00000,90.00000' part='0' rotate='0' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
-			<FIELD type='0' description='Ref' value='U2' show='1' pos='1.00000,-29.60000'/>
+			<FIELD type='0' description='Ref' value='U3' show='1' pos='1.00000,-29.60000'/>
 			<FIELD type='0' description='Name' value='9 DOF IMU' show='1' pos='1.00000,-32.00000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='0.00000,0.00000'/>
 		</SYMBOL>
 		<SYMBOL id='1' pos='172.00000,134.00000' part='0' rotate='0' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
-			<FIELD type='0' description='Ref' value='U4' show='1' pos='1.00000,-31.60000'/>
+			<FIELD type='0' description='Ref' value='U5' show='1' pos='1.00000,-31.60000'/>
 			<FIELD type='0' description='Name' value='Arduino Pro Mini' show='1' pos='1.00000,-34.00000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
@@ -626,7 +672,7 @@ download the executable.-->
 		<WIRE a='228.00000,140.00000' b='228.00000,90.00000'/>
 		<TEXT pos='174.00000,98.00000' direction='3' font='4' color='000000'>Set to 3.3V PGM using 3.3V</TEXT>
 		<SYMBOL id='2' pos='70.00000,132.00000' part='0' rotate='6' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
-			<FIELD type='0' description='Ref' value='U3' show='1' pos='-24.00000,2.00000'/>
+			<FIELD type='0' description='Ref' value='U4' show='1' pos='-24.00000,2.00000'/>
 			<FIELD type='0' description='Name' value='L1990' show='1' pos='-34.00000,-20.00000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
@@ -705,7 +751,7 @@ download the executable.-->
 		<LABEL pos='140.00000,134.00000' direction='1' font='4' color='208000' style='0'>BTN</LABEL>
 		<LABEL pos='224.00000,144.00000' direction='1' font='4' color='208000' style='0'>3.3V</LABEL>
 		<SYMBOL id='6' pos='168.00000,50.00000' part='0' rotate='0' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
-			<FIELD type='0' description='Ref' value='U1' show='1' pos='1.00000,-25.60000'/>
+			<FIELD type='0' description='Ref' value='U2' show='1' pos='1.00000,-25.60000'/>
 			<FIELD type='0' description='Name' value='5 Btn Keypad' show='1' pos='1.00000,-28.00000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
@@ -753,14 +799,14 @@ FreeIMU</NOTE_TEXT>
 		<LABEL pos='116.00000,200.00000' direction='2' font='4' color='208000' style='0'>3.3V</LABEL>
 		<TEXT pos='108.00000,166.00000' direction='3' font='3' color='000000'>Left</TEXT>
 		<SYMBOL id='9' pos='128.00000,192.00000' part='0' rotate='6' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
-			<FIELD type='0' description='Ref' value='U?' show='1' pos='-32.00000,2.00000'/>
+			<FIELD type='0' description='Ref' value='U6' show='1' pos='-32.00000,2.00000'/>
 			<FIELD type='0' description='Name' value='Wheel Enc' show='1' pos='-32.00000,-24.00000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='-32.00000,4.40000'/>
 		</SYMBOL>
 		<SYMBOL id='9' pos='174.00000,192.00000' part='0' rotate='3' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
-			<FIELD type='0' description='Ref' value='U?' show='1' pos='-32.00000,2.00000'/>
+			<FIELD type='0' description='Ref' value='U7' show='1' pos='-32.00000,2.00000'/>
 			<FIELD type='0' description='Name' value='Wheel Enc' show='1' pos='-32.00000,-24.00000'/>
 			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
 			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
@@ -782,5 +828,12 @@ FreeIMU</NOTE_TEXT>
 		<JUNCTION pos='132.00000,180.00000'/>
 		<WIRE a='142.00000,180.00000' b='132.00000,180.00000'/>
 		<TEXT pos='156.00000,168.00000' direction='3' font='3' color='000000'>Right</TEXT>
+		<SYMBOL id='10' pos='242.00000,36.00000' part='0' rotate='0' can_scale='0' show_power='0' scale_x='1.00000' scale_y='1.00000'>
+			<FIELD type='0' description='Ref' value='U1' show='1' pos='1.00000,-11.60000'/>
+			<FIELD type='0' description='Name' value='IR Range Finder' show='1' pos='1.00000,-14.00000'/>
+			<FIELD type='2' description='$$SPICE_PROLOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
+			<FIELD type='2' description='$$SPICE_EPILOG_PRIORITY' value='5' show='0' pos='0.00000,0.00000'/>
+			<FIELD type='1' description='Package' value='package name for PCB layout' show='0' pos='1.00000,-9.20000'/>
+		</SYMBOL>
 	</TinyCAD>
 </TinyCADSheets>

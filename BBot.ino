@@ -1,5 +1,5 @@
 /*
- *
+ * 
  * @file BBot.ino
  *
  * K Lawson 2015
@@ -10,7 +10,7 @@
  * The robot can be programmed with a keypad and follows a 
  * programmed path.  The IMU prevents drift and allows for
  * precise direction changes without encoders. 
- *
+ * A sharp IR range finder
  *
  */
 
@@ -65,7 +65,8 @@ uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\
 // Define commands that can be executed, first 2 are internally generated
 #define NONE 0
 #define IMU_WARM 1
-#define CANCEL 2
+#define CRASH 2
+#define CANCEL 3
 
 #define UP 5
 #define DN 6
@@ -170,8 +171,9 @@ void setup() {
 void loop() 
 {
     static int    SubLoop, Demand;
-    static byte   Moving, CMDBuff[256], Command, CurrentCMD;
+    static byte   Moving, CMDBuff[256], CurrentCMD;
     static float  Heading,HeadingTgt;
+    static byte Command;
     float Reduction;
     int i;
     SubLoop++;
@@ -203,26 +205,27 @@ void loop()
     // *********************************************************************
     if((SubLoop % 2) == 0)
     {
-    
-        //all functions return immediately
+        // Get user command
         DecodeUserSwitch(&Command,Moving,&CurrentCMD);      // @SM read ADC allways & decode to an integer; if driving this is lost else it's compiled.
-                                                            // Elsewhere it's turned to a sound.
-
+                                                            // Elsewhere it's turned to a sound.  Allways writes to Command                                                            
+        //Get system gen commands
         CheckIMU(&Command,Heading);                         // Look to see when the IMU has warmed up, issue a CMD when it has otherwise prevent start
-                                                            
+        CrashDetect(CurrentCMD, Moving, &Command);         // detect a crash with IR sensor
+        
+        // store / recall commands
         CompileUserCommands(CMDBuff,Command,&Moving);       // if not moving then compile. set moving when asked append  as last CMD
                                                             // [#CMDS] [CMD1] [CMD2] ..... [GO]  (go allways at end)
                                                             //HDG is +/- 180
-                   
+                                                            
         PullNextUserCommand(CMDBuff, Moving, &CurrentCMD);  // @SM if moving then execute next command 
-        
-      
-        ExecuteCommand(&CurrentCMD,&Moving,&HeadingTgt,Demand);// @SM takes several seconds to move the robot with a state machine
+
+        //Execute commads
+        ExecuteCommand(&CurrentCMD,&Moving,&HeadingTgt,Demand,Command);// @SM takes several seconds to move the robot with a state machine
                                                             // read CMD , then execute CMD in background.  For turn this is a modification of the TGT then a wait
                                                             // when a CMD has executed set it to NEXT_CMD so above code pulls next CMD
                                                             // For FWD the Auto head demands are offset FWD or back.  
                                                             // The Last CMD is allways "END" which which turns off motors and clears moving 
-                                                            // drivemotors allways does auto HDG when Moving!!       
+                                                            // drivemotors allways does auto HDG when Moving!!                                                                 
     }//END 10HZ
 
     // blink LED to indicate activity
@@ -235,10 +238,36 @@ void loop()
 }//END Loop
 
 //
+// Read in range finder, if crash likely cancel comamnd
+// and alert user
+
+void CrashDetect(byte CurrCMD, byte Moving, byte *Command)
+{
+  static int DetectCount;
+
+  // detect crash only when fwd though!
+  if(Moving && (CurrCMD == UP))
+  {
+    if( analogRead(1) > 250 )
+      DetectCount++;
+    else
+      DetectCount =0;
+  }
+  else
+    DetectCount=0;
+
+  if(DetectCount > 2)
+  {
+    *Command = CRASH;  //Beepola - sim btn press, execute gets this as well so it know to zero the motor demands
+  }
+  
+}//END 
+
+//
 // This routine executes the command in *CurrentCMD then zeroes it when done.
 // This only occurs if we are moving otherwise we are in standby.
 
-void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand)
+void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand,byte Command)
 {
   static byte state;
   static int ForeDmd,Time;
@@ -282,9 +311,13 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
     // @@@@@@@@@@ CMD Execute @@@@@@@@@@@@@@@@@@@@
     else 
     {
+        if(Command == CRASH)
+          ForeDmd=0;
+          
         // count down them move back to CMD execution state
         Time--;
-        if(Time==0)
+                 
+        if((Time==0) )
         {
           //we've reached the end of the program!
           if(*CurrentCMD == GO)
@@ -308,6 +341,8 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
     ForeDmd = 0;
   }
 
+
+
   DriveMotors( (Demand * -1) + ForeDmd,  Demand + ForeDmd, *Moving);
 }//END ExecuteCommand
 
@@ -322,9 +357,8 @@ void PullNextUserCommand(byte CMDBuff[],byte Moving, byte *CurrentCMD)  // @SM i
 
   if(Moving) 
   {
-    if(*CurrentCMD==NONE)
-    { 
-           
+    if((*CurrentCMD==NONE) || (*CurrentCMD==CRASH))
+    {    
         //need a new CMD...
         if(ptr <= CMDBuff[0])
         {
@@ -467,9 +501,11 @@ void ButtonSounder(byte *Command)
     if(*Command > NONE)
     {
       if(*Command==CANCEL)
-        state+=300;
+        state=300;
       else if (*Command==IMU_WARM)
-        state+=200;
+        state=100;
+      else if (*Command==CRASH)
+        state=20;
       else
         state+=10;
       
