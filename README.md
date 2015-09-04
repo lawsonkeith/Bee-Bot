@@ -1,11 +1,15 @@
-# Bee-Bot
+## Bee-Bot
 
-A simple wheeled robot that can be programmed to follow a course.  The robot has a keyboard that accepts movement commands and then executes them.  One unusual feature is that I've used a 6 DOF MEMS sensor to do all the navigation rather than wheel encoders.  The advantage here is that some a 6DOF IMU is a lot easier to integrate into any platform than wheel encoders.  My son wanted to build one of these as he used a 'Bee Bot' at school, it also reminded me of the 'Big Trak' toys that were around in the 80s.
+A simple wheeled robot that can be programmed to follow a course.  The robot has a keyboard that accepts movement commands and then executes them.  One unusual feature is that I've used a 6 DOF MEMS sensor to do all the navigation rather than wheel encoders.  The advantage here is that some a 6DOF IMU is a lot easier to integrate into any platform than wheel encoders, also slip isn't an issue.  The disadvantage is you don't know how far you've travelled.  I did hope it would be possible to do some linear vel/distance measurement with the IMU but unfortunately it's drift rate is way too high and the errors accumulate so it's only accurate for about 3s.
 
-I've included a sharp IR rangefinder as well to prevent the robot crashing into things.
+My son wanted to build one of these as he used a 'Bee Bot' at school, it also reminded me of the 'Big Trak' toys that were around in the 80s.  It's got PID control on heading so if you want to know how that works this is a good platform since quad copters and balancing robots tend to crash a lot when you get the constants wrong.  
+
+I've included a sharp IR rangefinder as well to prevent the robot crashing into things, there's a speaker to tell you when you've pressed a button.
+
+The idea is you program it to navigate round the room i.e send it to the kitchen and try and program it to come back etc.
 
 
-# Hardware
+## Hardware
 Use the schematic to wire up your robot.  I've included wheel encoders here but I didn't use them.  
 
 ![](https://github.com/lawsonkeith/Bee-Bot/blob/master/Schematic.png)
@@ -50,7 +54,9 @@ The software is coded to do the following:
 
 **Note** - You need to install the I2cDev and MPU6050 Libraries in your Arduino->Libraries folder.  I've provided these as a zip file, unzip it and drag the folders to above location.
 
-**Calibration** - You need to calibrate the IMU, to do this use the RAW program 'MPU6050_raw.ino' which is in the ZIP file.  The constants you get from there can be fed into your BBot.ino program.  YOu may get away with not doing it but I recommend that you do.
+
+## Calibration - IMU
+You need to calibrate the IMU, to do this use the RAW program 'MPU6050_raw.ino' I've included (not the examples).  The constants you get from there can be copied into your BBot.ino program.  You may get away with not doing it but I recommend that you do, my IMU performed mucho better once I'd calibrated it.
 
 http://www.i2cdevlib.com/forums/topic/91-how-to-decide-gyro-and-accelerometer-offsett/
 
@@ -62,6 +68,12 @@ http://www.i2cdevlib.com/forums/topic/91-how-to-decide-gyro-and-accelerometer-of
 6. Now modify your program again updating your offsets and run the sketch, with updated offsets.
 7. Repeat this process until your program is returning 0 for every gyro, 0 for X and Y accel, and +16384 for Z accel.
 8. Once you achieve this, those are the offsets for that MPU6050, you will have to repeat this for every MPU6050 you use.
+
+
+## Calibration - Motors
+Unless you copy my setup you'll also need to calibrate the motors and PID parameters.  The motors are scaled to +/- 1000 where 0 just about gets them moving.  1000 won't be 100% duty cycle though the all motors have a linear region, you'll have to find it for your robot by modifying the code to see how far the robot travels at certain demands in fixed time periods.  For me 20-80% duty cycle was linear, within that there has to be headroom for the PID to actually control robot heading.
+
+Also you may need to the alter the PID constants, there's loads of info on how to do this on the web.
 
 
 
