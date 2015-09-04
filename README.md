@@ -8,7 +8,7 @@ I've included a sharp IR rangefinder as well to prevent the robot crashing into 
 # Hardware
 Use the schematic to wire up your robot.  I've included wheel encoders here but I didn't use them.  
 
-![](https://github.com/lawsonkeith/Bee-Bot/blob/master/Schematic.pgn)
+![](https://github.com/lawsonkeith/Bee-Bot/blob/master/Schematic.png)
 
 
 **Motors & Chassis** -
