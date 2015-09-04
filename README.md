@@ -29,7 +29,7 @@ This is done using a sharp IR range finder which feeds into the second Arduino a
 **Power** -
 The unit is powered using 4xAAA hybrio batteries. This makes up the unregulated supply that feeds the motor control.  The rest of the devices are powered by a 3.3V regulated supply which is generated on the Arduino mini pro.  I made a little power distribution board that was fed via a switch to help me route the power on the device.
 
-**Audio ** -
+**Audio** -
 A speaker provides audio feedback on button presses and IMU status.
 
 **Wiring** -
