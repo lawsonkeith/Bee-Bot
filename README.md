@@ -86,7 +86,18 @@ http://www.i2cdevlib.com/forums/topic/91-how-to-decide-gyro-and-accelerometer-of
 ## Calibration - Motors
 Unless you copy my setup you'll also need to calibrate the motors and PID parameters.  The motors are scaled to +/- 1000 where 0 just about gets them moving.  1000 won't be 100% duty cycle though the all motors have a linear region, you'll have to find it for your robot by modifying the code to see how far the robot travels at certain demands in fixed time periods.  For me 20-80% duty cycle was linear, within that there has to be headroom for the PID to actually control robot heading.
 
-Also you may need to the alter the PID constants, there's loads of info on how to do this on the web.
+It's worth spending a good hour making sure you've got the motors calibrated otherwise it'll be almost impossible to get the PID tuning right.  
+
+
+## Calibration - PID heading control
+
+The direction the robot faces is controlled by the IMU heading as derived from the gyro.  This ensures the robot travels in 90 degree arcs.  Without this the robot can't turn 90 degrees accurately or travel in a straight line.
+
+Usually people use encoders for this but I'd not seen anyone try and use a gyro, this is actually common practice on sea going machines which is the industry I work in.
+
+You may need to the alter the PID constants if yo change the motor or batteries. There's loads of info on how to do this on the web.  Basically P is proportional to the error and the I term gets rid of long term error.  You basically increase P as high as you can before the heading oscillates then tune I to get rid of long term errors when travelling in a straight line.
+
+I found I needed 2 sets of constants as the moving case needed more agressive control than the stationary and turning case.
 
 
 
