@@ -11,6 +11,7 @@ I've included a sharp IR rangefinder as well to prevent the robot crashing into 
 
 The idea is you program it to navigate round the room i.e send it to the kitchen and try and program it to come back etc.  You can watch a video of it doing some obstacle avoidance and simple navigation here:
 
+http://youtu.be/1cztSxTJ8SI
 
 
 ## Hardware
