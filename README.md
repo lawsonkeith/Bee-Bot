@@ -35,7 +35,7 @@ This comes from an analogue touch pad that has 5 buttons, each button outputs a 
 ![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/IMG_1122.JPG)
 
 **Obstacle avoidance** -
-This is done using a sharp IR range finder which feeds into the second Arduino analog input.
+This is done using a sharp 2Y0A21 F 39 IR range finder which feeds into the second Arduino analog input.
 
 **Power** -
 The unit is powered using 4xAAA hybrio batteries. This makes up the unregulated supply that feeds the motor control.  The rest of the devices are powered by a 3.3V regulated supply which is generated on the Arduino mini pro.  I made a little power distribution board that was fed via a switch to help me route the power on the device.  It's got a green LED on it to show when it's powered.  A rocker switch controls power.
@@ -50,7 +50,7 @@ I've used 2.54mm headers and socket-socket connectors to wire everything up.
 I've used tie wraps and 3mm nuts and bolts to secure most things.  A electrical socket protector was used to make the range finder mount.  3mm washers were used where I needed to space things and Araldite where I needed to glue of fix something.
 
 **IMU**
-I use and MPU 6050 6 DOF accelerometer / gyro to make sure the robot maintained a heading.  
+I use and MPU 6050 6 DOF accelerometer / gyro to make sure the robot maintained a heading.  The accelerometer doesn't really do anything.
 
 
 # Software
@@ -84,7 +84,9 @@ http://www.i2cdevlib.com/forums/topic/91-how-to-decide-gyro-and-accelerometer-of
 
 
 ## Calibration - Motors
-Unless you copy my setup you'll also need to calibrate the motors and PID parameters.  The motors are scaled to +/- 1000 where 0 just about gets them moving.  1000 won't be 100% duty cycle though the all motors have a linear region, you'll have to find it for your robot by modifying the code to see how far the robot travels at certain demands in fixed time periods.  For me 20-80% duty cycle was linear, within that there has to be headroom for the PID to actually control robot heading.
+Unless you copy my setup you'll also need to calibrate the motors.  The motors are scaled to +/- 1000 where 0 just about gets them moving obviously the arduino PWM is generally 0-255 and unipolar.  1000 won't be 100% duty cycle though the all motors have a linear region, you'll have to find it for your robot by modifying the code to see how far the robot travels at certain demands in fixed time periods.  I made a table up and measured distance at 10% demand increments.
+
+For me 20-80% duty cycle was linear, within that there has to be headroom for the PID to actually control robot heading.  If 1000% is full speed then you can't really do heading control anymore.  Also I wanted to guard against dipping the battery voltage when the robot travels forwards and resetting the Arduino.
 
 It's worth spending a good hour making sure you've got the motors calibrated otherwise it'll be almost impossible to get the PID tuning right.  
 
