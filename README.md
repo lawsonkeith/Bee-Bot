@@ -32,6 +32,8 @@ This is done with an Arduino pro mini.  You need a 3.3V version or a version tha
 **Command input** -
 This comes from an analogue touch pad that has 5 buttons, each button outputs a different voltage into the Arduino analog input when pressed.
 
+![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/IMG_1122.JPG)
+
 **Obstacle avoidance** -
 This is done using a sharp IR range finder which feeds into the second Arduino analog input.
 
