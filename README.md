@@ -1,3 +1,7 @@
+![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/MAIN.JPG)
+
+
+
 ## Bee-Bot
 
 A simple wheeled robot that can be programmed to follow a course.  The robot has a keyboard that accepts movement commands and then executes them.  One unusual feature is that I've used a 6 DOF MEMS sensor to do all the navigation rather than wheel encoders.  The advantage here is that some a 6DOF IMU is a lot easier to integrate into any platform than wheel encoders, also slip isn't an issue.  The disadvantage is you don't know how far you've travelled.  I did hope it would be possible to do some linear vel/distance measurement with the IMU but unfortunately it's drift rate is way too high and the errors accumulate so it's only accurate for about 3s.
