@@ -43,6 +43,9 @@ A speaker provides audio feedback on button presses and IMU status.
 **Wiring** -
 I've used 2.54mm headers and socket-socket connectors to wire everything up.
 
+**Fixings**
+I've used tie wraps and 3mm nuts and bolts to secure most things.  A electrical socket protector was used to make the range finder mount.  3mm washers were used where I needed to space things and Araldite where I needed to glue of fix something.
+
 
 # Software
 
