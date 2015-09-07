@@ -1,8 +1,7 @@
 ![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/MAIN.JPG)
 
 
-
-## Bee-Bot
+## Introduction
 
 A simple wheeled robot that can be programmed to follow a course.  The robot has a keyboard that accepts movement commands and then executes them.  One unusual feature is that I've used a 6 DOF MEMS sensor to do all the navigation rather than wheel encoders.  The advantage here is that some a 6DOF IMU is a lot easier to integrate into any platform than wheel encoders, also slip isn't an issue.  The disadvantage is you don't know how far you've travelled.  I did hope it would be possible to do some linear vel/distance measurement with the IMU but unfortunately it's drift rate is way too high and the errors accumulate so it's only accurate for about 3s.
 
@@ -10,7 +9,8 @@ My son wanted to build one of these as he used a 'Bee Bot' at school, it also re
 
 I've included a sharp IR rangefinder as well to prevent the robot crashing into things, there's a speaker to tell you when you've pressed a button.
 
-The idea is you program it to navigate round the room i.e send it to the kitchen and try and program it to come back etc.
+The idea is you program it to navigate round the room i.e send it to the kitchen and try and program it to come back etc.  You can watch a video of it doing some obstacle avoidance and simple navigation here:
+
 
 
 ## Hardware
@@ -35,7 +35,7 @@ This comes from an analogue touch pad that has 5 buttons, each button outputs a 
 This is done using a sharp IR range finder which feeds into the second Arduino analog input.
 
 **Power** -
-The unit is powered using 4xAAA hybrio batteries. This makes up the unregulated supply that feeds the motor control.  The rest of the devices are powered by a 3.3V regulated supply which is generated on the Arduino mini pro.  I made a little power distribution board that was fed via a switch to help me route the power on the device.
+The unit is powered using 4xAAA hybrio batteries. This makes up the unregulated supply that feeds the motor control.  The rest of the devices are powered by a 3.3V regulated supply which is generated on the Arduino mini pro.  I made a little power distribution board that was fed via a switch to help me route the power on the device.  It's got a green LED on it to show when it's powered.  A rocker switch controls power.
 
 **Audio** -
 A speaker provides audio feedback on button presses and IMU status.
@@ -45,6 +45,9 @@ I've used 2.54mm headers and socket-socket connectors to wire everything up.
 
 **Fixings**
 I've used tie wraps and 3mm nuts and bolts to secure most things.  A electrical socket protector was used to make the range finder mount.  3mm washers were used where I needed to space things and Araldite where I needed to glue of fix something.
+
+**IMU**
+I use and MPU 6050 6 DOF accelerometer / gyro to make sure the robot maintained a heading.  
 
 
 # Software
