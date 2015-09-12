@@ -39,6 +39,15 @@ This is done using a sharp 2Y0A21 F 39 IR range finder which feeds into the seco
 
 **Power** -
 The unit is powered using 4xAAA hybrio batteries. This makes up the unregulated supply that feeds the motor control.  The rest of the devices are powered by a 3.3V regulated supply which is generated on the Arduino mini pro.  I made a little power distribution board that was fed via a switch to help me route the power on the device.  It's got a green LED on it to show when it's powered.  A rocker switch controls power.
+I made this with some veroboard and 2.54mm Header strip:
+
+VBatt   oxxxxxxo   
+                  
+V3.3V   oxxxxxxo
+                 
+GND     oxxxxxxo 
+                  
+Put the headers in line with the tracks and drill a few foles to feed the battery wires for strain relief.
 
 **Audio** -
 A speaker provides audio feedback on button presses and IMU status.
