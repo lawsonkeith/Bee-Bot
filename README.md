@@ -32,8 +32,6 @@ This is done with an Arduino pro mini.  You need a 3.3V version or a version tha
 **Command input** -
 This comes from an analogue touch pad that has 5 buttons, each button outputs a different voltage into the Arduino analog input when pressed.
 
-![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/IMG_1122.JPG)
-
 **Obstacle avoidance** -
 This is done using a sharp 2Y0A21 F 39 IR range finder which feeds into the second Arduino analog input.
 
@@ -61,6 +59,17 @@ I've used tie wraps and 3mm nuts and bolts to secure most things.  A electrical 
 **IMU**
 I use and MPU 6050 6 DOF accelerometer / gyro to make sure the robot maintained a heading.  The accelerometer doesn't really do anything.
 
+![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/IMG_1123.JPG)
+
+![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/IMG_1125.JPG)
+
+![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/IMG_1122.JPG)
+
+![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/IMG_1119.JPG)
+
+![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/IMG_1120.JPG)
+
+![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/IMG_1118.JPG)
 
 # Software
 
@@ -77,10 +86,12 @@ The software is coded to do the following:
 **Note** - You need to install the I2cDev and MPU6050 Libraries in your Arduino->Libraries folder.  I've provided these as a zip file, unzip it and drag the folders to above location.
 
 
+
 ## Calibration - IMU
 You need to calibrate the IMU, to do this use the RAW program 'MPU6050_raw.ino' I've included (not the examples).  The constants you get from there can be copied into your BBot.ino program.  You may get away with not doing it but I recommend that you do, my IMU performed mucho better once I'd calibrated it.
 
 http://www.i2cdevlib.com/forums/topic/91-how-to-decide-gyro-and-accelerometer-offsett/
+
 
 1. Put the MPU6050 in a flat and horizontal surface. Use an inclinometer to check that it is as horizontal as possible.
 2. Modify the RAW program to put every offset to 0. ("setXGyroOffset/setYGyroOffset/setZGyroOffset/setZAccelOffset"  =0 ).
