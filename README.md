@@ -108,7 +108,7 @@ Unless you copy my setup you'll also need to calibrate the motors.  The motors a
 
 ![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/motor.JPG)
 
-For me 20-80% duty cycle was linear, within that there has to be headroom for the PID to actually control robot heading.  If 1000% is full speed then you can't really do heading control anymore.  Also I wanted to guard against dipping the battery voltage when the robot travels forwards and resetting the Arduino.
+For me 20-80% duty cycle was linear, within that there has to be headroom for the PID to actually control robot heading.  If 1000% is full speed then you can't really do heading control anymore.  Also I wanted to guard against dipping the battery voltage when the robot travels forwards and resetting the Arduino.  So you can see in the above graph that I don't drive the motors 100% and I distribute the available speed between fore/aft and heading control.
 
 It's worth spending a good hour making sure you've got the motors calibrated otherwise it'll be almost impossible to get the PID tuning right.  
 
