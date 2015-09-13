@@ -104,7 +104,9 @@ http://www.i2cdevlib.com/forums/topic/91-how-to-decide-gyro-and-accelerometer-of
 
 
 ## Calibration - Motors
-Unless you copy my setup you'll also need to calibrate the motors.  The motors are scaled to +/- 1000 where 0 just about gets them moving obviously the arduino PWM is generally 0-255 and unipolar.  1000 won't be 100% duty cycle though the all motors have a linear region, you'll have to find it for your robot by modifying the code to see how far the robot travels at certain demands in fixed time periods.  I made a table up and measured distance at 10% demand increments.
+Unless you copy my setup you'll also need to calibrate the motors.  The motors are scaled to +/- 1000 where 0 just about gets them moving obviously the arduino PWM is generally 0-255 and unipolar.  1000 won't be 100% duty cycle though the all motors have a linear region, you'll have to find it for your robot by modifying the code to see how far the robot travels at certain demands in fixed time periods.  I made a table up and measured distance at 10% demand increments.  This provided me roughly with the following table where it can be seen there is a linear region.
+
+![](https://github.com/lawsonkeith/Bee-Bot/blob/master/132___09/motor.JPG)
 
 For me 20-80% duty cycle was linear, within that there has to be headroom for the PID to actually control robot heading.  If 1000% is full speed then you can't really do heading control anymore.  Also I wanted to guard against dipping the battery voltage when the robot travels forwards and resetting the Arduino.
 
