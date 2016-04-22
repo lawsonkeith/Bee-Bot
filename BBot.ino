@@ -247,11 +247,11 @@ void loop()
 void CrashDetect(byte CurrCMD, byte Moving, byte *Command)
 {
   static int DetectCount;
-
+//Serial.println(  analogRead(1)  );
   // detect crash only when fwd though!
   if(Moving && (CurrCMD == UP))
   {
-    if( analogRead(1) > 250 )
+    if( analogRead(1) > 550 )
       DetectCount++;
     else
       DetectCount =0;
@@ -284,7 +284,7 @@ void ExecuteCommand(byte *CurrentCMD,byte *Moving,float *HeadingTgt,float Demand
      
       switch(*CurrentCMD)
       {
-        case UP:    ForeDmd = 400;
+        case UP:    ForeDmd = 500;
                     Time = ExecuteDelay * .7 ;
                     state++;
                     break;
